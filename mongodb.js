@@ -19,5 +19,31 @@ MongoClient.connect(
 			name: 'Johnatan',
 			age: 31,
 		});
+
+		db.collection('users').insertMany([
+			{
+				name: 'Jen',
+				age: 28,
+			},
+			{
+				name: 'Gunther',
+				age: 27,
+			},
+		]);
+
+		db.collection('tasks').insertMany([
+			{
+				description: 'Clean the house',
+				completed: true,
+			},
+			{
+				description: 'Renew inspection',
+				completed: false,
+			},
+			{
+				description: 'Pot plants',
+				completed: false,
+			},
+		]);
 	},
 );
