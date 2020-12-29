@@ -77,5 +77,31 @@ MongoClient.connect(
 		db.collection('users').findOne({ _id: new ObjectID('5feaf8117146a24b5c3f5c89')  }, (error, user) => {
 			console.log(user);
 		});
+
+		// Update
+		db.collection('users').updateOne({
+			_id: new ObjectID('5feaf8117146a24b5c3f5c89'),
+		},
+		{
+			$set: {
+				name: 'Johnatan Lopes',
+			},
+		}).then((result) => {
+			console.log(result);
+		}).catch((error) => {
+			console.log(error);
+		});
+
+		db.collection('tasks').updateMany({
+			completed: false,
+		}, {
+			$set: {
+				completed: true,
+			},
+		}).then((result) => {
+			console.log(result);
+		}).catch((error) => {
+			console.log(error);
+		});
 	},
 );
