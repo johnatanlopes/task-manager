@@ -103,5 +103,10 @@ MongoClient.connect(
 		}).catch((error) => {
 			console.log(error);
 		});
+
+		// Deletando
+		db.collection('users').deleteOne({ name: 'Johnatan Lopes' });
+
+		db.collection('users').deleteMany({ name: 'Johnatan' });
 	},
 );
