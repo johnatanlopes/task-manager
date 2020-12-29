@@ -43,6 +43,50 @@ app.get('/users/:id', async (req, res) => {
 	}
 });
 
+app.put('/users/:id', async (req, res) => {
+	try {
+		const updates = Object.keys(req.body);
+		const allowedUpdates = ['name', 'email', 'password', 'age'];
+
+		const isValidOperation = updates.every((update) => {
+			return allowedUpdates.includes(update);
+		});
+
+		if (!isValidOperation) {
+			return res.status(400).json({ error: 'Invalid updates' });
+		}
+
+		const _id = req.params.id;
+		const user = await User.findByIdAndUpdate(_id, req.body, { 
+			new: true, 
+			runValidators: true,
+		});
+
+		if (!user) {
+			return res.status(404).json();
+		}
+
+		return res.status(200).json(user);
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+});
+
+app.delete('/users/:id', async (req, res) => {
+	try {
+		const _id = req.params.id;
+		const user = await User.findByIdAndDelete(_id);
+
+		if (!user) {
+			return res.status(404).json();
+		}
+
+		return res.status(200).json(user);
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+});
+
 app.get('/tasks', async (req, res) => {
 	try {
 		const tasks = await Task.find({});
@@ -76,6 +120,51 @@ app.get('/tasks/:id', async (req, res) => {
 		return res.status(500).json(error);
 	}
 });
+
+app.put('/tasks/:id', async (req, res) => {
+	try {
+		const updates = Object.keys(req.body);
+		const allowedUpdates = ['description', 'completed'];
+
+		const isValidOperation = updates.every((update) => {
+			return allowedUpdates.includes(update);
+		});
+
+		if (!isValidOperation) {
+			return res.status(400).json({ error: 'Invalid updates' });
+		}
+
+		const _id = req.params.id;
+		const task = await Task.findByIdAndUpdate(_id, req.body, { 
+			new: true, 
+			runValidators: true,
+		});
+
+		if (!task) {
+			return res.status(404).json();
+		}
+
+		return res.status(200).json(task);
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+});
+
+app.delete('/tasks/:id', async (req, res) => {
+	try {
+		const _id = req.params.id;
+		const task = await Task.findByIdAndDelete(_id);
+
+		if (!task) {
+			return res.status(404).json();
+		}
+
+		return res.status(200).json(task);
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+});
+
 
 app.listen(port, () => {
 	console.log(`Server is up on port ${port}`);
