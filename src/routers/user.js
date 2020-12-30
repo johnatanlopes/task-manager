@@ -51,14 +51,15 @@ router.put('/users/:id', async (req, res) => {
 		}
 
 		const _id = req.params.id;
-		const user = await User.findByIdAndUpdate(_id, req.body, { 
-			new: true, 
-			runValidators: true,
-		});
+		const user = await User.findById(_id);
 
 		if (!user) {
 			return res.status(404).json();
 		}
+
+		updates.forEach((update) => user[update] = req.body[update]);
+
+		await user.save();
 
 		return res.status(200).json(user);
 	} catch (error) {
