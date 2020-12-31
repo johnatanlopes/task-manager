@@ -24,6 +24,11 @@ router.get('/users', authMiddleware, async (req, res) => {
 	}
 });
 
+router.get('/users/me', authMiddleware, async (req, res) => {
+	return res.status(200).json(req.user);
+});
+
+
 router.post('/users', async (req, res) => {
 	try {
 		const user = new User(req.body);
