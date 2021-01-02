@@ -61,22 +61,7 @@ router.post('/users', async (req, res) => {
 	}
 });
 
-router.get('/users/:id', async (req, res) => {
-	try {
-		const _id = req.params.id;
-		const user = await User.findById(_id);
-
-		if (!user) {
-			return res.status(404).json();
-		}
-
-		return res.status(200).json(user);
-	} catch (error) {
-		return res.status(500).json(error);
-	}
-});
-
-router.put('/users/:id', async (req, res) => {
+router.put('/users/me', authMiddleware, async (req, res) => {
 	try {
 		const updates = Object.keys(req.body);
 		const allowedUpdates = ['name', 'email', 'password', 'age'];
@@ -89,33 +74,20 @@ router.put('/users/:id', async (req, res) => {
 			return res.status(400).json({ error: 'Invalid updates' });
 		}
 
-		const _id = req.params.id;
-		const user = await User.findById(_id);
+		updates.forEach((update) => req.user[update] = req.body[update]);
 
-		if (!user) {
-			return res.status(404).json();
-		}
-
-		updates.forEach((update) => user[update] = req.body[update]);
-
-		await user.save();
-
-		return res.status(200).json(user);
+		await req.user.save();
+		
+		return res.status(200).json(req.user);
 	} catch (error) {
 		return res.status(500).json(error);
 	}
 });
 
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/me', authMiddleware, async (req, res) => {
 	try {
-		const _id = req.params.id;
-		const user = await User.findByIdAndDelete(_id);
-
-		if (!user) {
-			return res.status(404).json();
-		}
-
-		return res.status(200).json(user);
+		await req.user.remove();
+		return res.status(200).json(req.user);
 	} catch (error) {
 		return res.status(500).json(error);
 	}
