@@ -6,11 +6,17 @@ const Task = require('../models/task');
 
 router.get('/tasks', authMiddleware, async (req, res) => {
 	try {
-		const { completed, limit, skip } = req.query;
+		const { completed, limit, skip, sortBy } = req.query;
 		const match = {};
+		const sort = {};
 
 		if (completed) {
 			match.completed = completed === 'true';
+		}
+
+		if (sortBy) {
+			const parts = sortBy.split(':');
+			sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
 		}
 
 		await req.user.populate({
@@ -20,6 +26,7 @@ router.get('/tasks', authMiddleware, async (req, res) => {
 				limit: parseInt(limit),
 				skip: parseInt(skip),
 			},
+			sort,
 		}).execPopulate();
 
 		return res.status(200).json(req.user.tasks);
