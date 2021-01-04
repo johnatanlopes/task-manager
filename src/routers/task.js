@@ -6,9 +6,21 @@ const Task = require('../models/task');
 
 router.get('/tasks', authMiddleware, async (req, res) => {
 	try {
-		const tasks = await Task.find({ owner: req.user._id });
-		return res.status(200).json(tasks);
+		const { completed } = req.query;
+		const match = {};
+
+		if (completed) {
+			match.completed = completed === 'true';
+		}
+
+		await req.user.populate({
+			path: 'tasks',
+			match,
+		}).execPopulate();
+
+		return res.status(200).json(req.user.tasks);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).json(error);
 	}
 });
