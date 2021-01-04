@@ -6,7 +6,7 @@ const Task = require('../models/task');
 
 router.get('/tasks', authMiddleware, async (req, res) => {
 	try {
-		const { completed } = req.query;
+		const { completed, limit, skip } = req.query;
 		const match = {};
 
 		if (completed) {
@@ -16,6 +16,10 @@ router.get('/tasks', authMiddleware, async (req, res) => {
 		await req.user.populate({
 			path: 'tasks',
 			match,
+			options: {
+				limit: parseInt(limit),
+				skip: parseInt(skip),
+			},
 		}).execPopulate();
 
 		return res.status(200).json(req.user.tasks);
