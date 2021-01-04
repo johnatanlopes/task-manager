@@ -1,7 +1,6 @@
 const express = require('express');
 const router = new express.Router();
 const multer = require('multer');
-const auth = require('../middleware/auth');
 
 const authMiddleware = require('../middleware/auth');
 const User = require('../models/user');
@@ -117,6 +116,21 @@ router.post('/users/me/avatar', authMiddleware,
 	return res.status(200).json();
 }, (error, req, res, next) => {
 	return res.status(404).json({ error:error.message });
+});
+
+router.get('/users/:id/avatar', async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
+
+		if (!user || !user.avatar) {
+			throw new Error();
+		}
+
+		res.set('Content-Type', 'image/jpg');
+		return res.status(200).send(user.avatar);
+	} catch (error) {
+		return res.status(404).json();
+	}
 });
 
 module.exports = router;
