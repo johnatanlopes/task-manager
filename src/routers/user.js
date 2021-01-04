@@ -7,6 +7,16 @@ const User = require('../models/user');
 
 const upload = multer({
 	dest: 'avatar',
+	limits: {
+		fileSize: 1000000,
+	},
+	fileFilter(req, file, cb) {
+		if (!file.originalname.match(/\.(png|jpeg|jpg)$/)) {
+			return cb(new Error('Please upload a png or jpg'));
+		}
+
+		cb(undefined, true);
+	},
 });
 
 router.post('/users/login', async (req, res) => {
