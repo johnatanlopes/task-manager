@@ -1,12 +1,14 @@
 const express = require('express');
 const router = new express.Router();
 const multer = require('multer');
+const auth = require('../middleware/auth');
 
 const authMiddleware = require('../middleware/auth');
 const User = require('../models/user');
 
 const upload = multer({
 	dest: 'avatar',
+	storage: multer.memoryStorage(),
 	limits: {
 		fileSize: 1000000,
 	},
@@ -108,7 +110,10 @@ router.delete('/users/me', authMiddleware, async (req, res) => {
 	}
 });
 
-router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+router.post('/users/me/avatar', authMiddleware, 
+	upload.single('avatar'), async (req, res) => {
+	req.user.avatar = req.file.buffer;
+	await req.user.save();
 	return res.status(200).json();
 }, (error, req, res, next) => {
 	return res.status(404).json({ error:error.message });
