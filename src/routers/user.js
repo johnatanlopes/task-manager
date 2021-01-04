@@ -110,6 +110,8 @@ router.delete('/users/me', authMiddleware, async (req, res) => {
 
 router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
 	return res.status(200).json();
+}, (error, req, res, next) => {
+	return res.status(404).json({ error:error.message });
 });
 
 module.exports = router;
