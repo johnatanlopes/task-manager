@@ -1,7 +1,8 @@
+require('dotenv/config');]
 const mongodb = require('mongodb');
 
-const connectionURL = 'mongodb://127.0.0.1:27017';
-const databaseName = 'task-manager';
+const connectionURL = process.env.MONGODB_URL;
+const databaseName = process.env.MONGODB_DBNAME;
 const MongoClient = mongodb.MongoClient;
 const ObjectID = mongodb.ObjectID;
 
