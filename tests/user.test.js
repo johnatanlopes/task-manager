@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 
 const app = require('../src/app');
 const User = require('../src/models/user');
-const { send } = require('@sendgrid/mail');
 
 const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
