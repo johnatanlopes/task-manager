@@ -24,18 +24,31 @@ beforeEach(async () => {
 });
 
 test('Should signup a new user', async () => {
-    await request(app).post('/users').send({
+    const res = await request(app).post('/users').send({
         name: 'Test',
         email: 'test@exemple.com',
         password: '123456789'
     }).expect(201);
+
+    expect(res.body.name).toBe('Test');
+
+    expect(res.body).toMatchObject({
+        name: 'Test',
+        email: 'test@exemple.com',
+    });
+
+    const user = await User.findById(res.body._id);
+    expect(user).not.toBeNull();
 });
 
 test('Should login existing user', async () => {
-    await request(app).post('/users/login').send({
+    const res = await request(app).post('/users/login').send({
         email: userOne.email,
         password: userOne.password,
     }).expect(200);
+
+    const user = await User.findById(userOneId);
+    expect(res.body.token).toBe(user.tokens[1].token);
 });
 
 test('Should not login nonexistent user', async () => {
@@ -63,6 +76,9 @@ test('Should delete account for user', async () => {
         .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
         .send()
         .expect(200);
+
+    const user = await User.findById(userOneId);
+    expect(user).toBeNull();
 });
 
 test('Should not delete account for unauthenticated user', async () => {
